@@ -5,9 +5,9 @@ require(ggplot2)
 fillDiag <- function(G, approx_method='auto') {
   ## This function fills the diagonal of G as in Algorithm 1
   
-  ## For approx method you can pass either auto which will default
-  ## to nuclear norm minimization for small matrix or SVT for larger
-  ## or you can pass SVT or nuclear directly to force
+  ## For approx_method you can choose the method automatically
+  ## Or you can force nuclear or SVT
+  
   
   diag(G) <- NA
   if (approx_method == 'auto') {
@@ -32,14 +32,13 @@ fillDiag <- function(G, approx_method='auto') {
 }
 
 computeAR <- function(G, rank=-1, compute_diag=TRUE) {
-  ## It returns the rank k embeddings as well as various summary
-  ## statistics
+  ## This returns the rank k embeddings as well as various summary
+  ## statistics (reconstruction precision, cosine similarities in A and R space)
   
   ## Pass rank=-1 for full rank approx
   
-  ## The compute_diag flag should be set to false if the diagonal
-  ## is already pre-computed, otherwise it will replace by the nuclear
-  ## norm minimizing diagonal
+  ## The compute_diag flag should be set to FALSE if the diagonal
+  ## is already pre-computed
   
   if (compute_diag == TRUE) {
     G <- fillDiag(G)
@@ -63,9 +62,9 @@ computeAR <- function(G, rank=-1, compute_diag=TRUE) {
   Acomp <- 0
   An <- 0
   
-  # Deal with R's terrible broadcasting
+  # If statements to deal with R's terrible broadcasting 
   
-  ## Note that eigenvectors are column-wise in R
+  ## Note that eigenvectors are columns in R
   if (length(D_pos) == 1) {
     A <- Vecs[,D_pos] * sqrt(D[D_pos])
     Acomp <- A %*% t(A)
